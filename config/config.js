@@ -15,14 +15,7 @@ const plugins = [
       dva: {
         hmr: true,
       },
-      locale: {
-        // default false
-        enable: true,
-        // default zh-CN
-        default: 'zh-CN',
-        // default true, when it is true, will use `navigator.language` overwrite default
-        baseNavigator: true,
-      },
+      locale: true,
       // dynamicImport: {
       //   loadingComponent: './components/PageLoading/index',
       //   webpackChunkName: true,
@@ -35,18 +28,20 @@ const plugins = [
               importWorkboxFrom: 'local',
             },
           }
-        : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
+        : false,
+      // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
+      hd: false,
     },
   ],
   [
     'umi-plugin-pro-block',
     {
-      moveMock: false,
+      moveMock: true,
       moveService: false,
       modifyRequest: true,
       autoAddMenu: true,
@@ -108,11 +103,16 @@ export default {
               component: './Welcome',
             },
             {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
+              name: '个人设置',
+              icon: 'smile',
+              path: '/account/setting',
+              component: './user/AccountSettings',
+            },
+            {
+              name: '分组',
+              icon: 'smile',
+              path: '/groups/list',
+              component: './groups/GroupsTableList',
             },
             {
               component: './404',
@@ -170,13 +170,13 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  /*
   proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
+    '/api/': {
+      target: 'https://api.fh.shoogoome.com/',
       changeOrigin: true,
-      pathRewrite: { '^/server': '' },
+      pathRewrite: {
+        '^/api/': '',
+      },
     },
   },
-  */
 };
