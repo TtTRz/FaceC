@@ -30,7 +30,7 @@ functions/*
 
 # umi
 .umi
-.umi-production
+./.umi-production
 
 # screenshot
 screenshot
@@ -38,3 +38,6 @@ screenshot
 .eslintcache
 
 build
+
+./src/pages/.umi-production/router.js
+
