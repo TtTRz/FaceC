@@ -112,7 +112,7 @@ export default {
               name: '分组',
               icon: 'usergroup-delete',
               path: '/group/list',
-              component: './group/GroupList',
+              component: './group/groupList',
             },
             {
               path: '/group/:gid',
