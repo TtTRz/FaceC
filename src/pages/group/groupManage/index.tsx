@@ -12,6 +12,9 @@ import {
   Modal,
   Upload,
 } from 'antd';
+
+const { confirm } = Modal;
+
 import React, { Component, Fragment } from 'react';
 
 import { Dispatch, Action } from 'redux';
@@ -100,7 +103,7 @@ class TableList extends Component<TableListProps, TableListState> {
       dataIndex: 'code',
     },
     {
-      title: '名称',
+      title: '姓名',
       dataIndex: 'name',
     },
     {
@@ -110,11 +113,11 @@ class TableList extends Component<TableListProps, TableListState> {
     },
     {
       title: '操作',
-      render: (text, record) => (
+      render: (item) => (
         <Fragment>
           <a>修改</a>
           <Divider type="vertical" />
-          <a style={{ color: 'red'}} href="">删除</a>
+          <a style={{ color: 'red'}} onClick={() => this.handleDelClick(item)}>删除</a>
         </Fragment>
       ),
     },
@@ -215,6 +218,13 @@ class TableList extends Component<TableListProps, TableListState> {
             uploading: false,
             fileList: [],
             modalVisible: false,
+          }, () => {
+            dispatch({
+              type: 'group/fetchManageListEffect',
+              payload: {
+                id: this.props.match.params.gid,
+              }
+            });
           });
           if(res) {
             message.success("上传成功");
@@ -225,18 +235,76 @@ class TableList extends Component<TableListProps, TableListState> {
       },
     })
   };
+  handleDelClick = (item) => {
+    const { dispatch } = this.props;
+    // @ts-ignore
+    confirm({
+      title: '删除脸谱',
+      content: `您确定要删除 学号：${item.code}, 姓名：${item.name} 的脸谱吗？`,
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'group/delManageListEffect',
+          payload: {
+            id: this.props.match.params.gid,
+            ids: [ item.id ]
+          }
+        }).then(() => {
+          dispatch({
+            type: 'group/fetchManageListEffect',
+            payload: {
+              id: this.props.match.params.gid,
+            }
+          })
+        })
+      }
+    })
+  }
+  handleMDelClick = () => {
+    const { dispatch } = this.props;
+    // @ts-ignore
+    confirm({
+      title: '批量删除脸谱',
+      content: '您确定要删除这些脸谱吗？',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: () => {
+        dispatch({
+          type: 'group/delManageListEffect',
+          payload: {
+            id: this.props.match.params.gid,
+            ids: this.state.selectedRows.map(item => item.id)
+          }
+        }).then(() => {
+          this.setState({
+            selectedRows: [],
+          },() =>{
+            dispatch({
+              type: 'group/fetchManageListEffect',
+              payload: {
+                id: this.props.match.params.gid,
+              }
+            });
+          })
+        })
+      },
+    });
+  };
   render() {
     const {
       group,
       loading,
     } = this.props;
     const { selectedRows, modalVisible } = this.state;
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
+    // const menu = (
+    //   <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
+    //     <Menu.Item key="remove">删除</Menu.Item>
+    //     <Menu.Item key="approval">批量审批</Menu.Item>
+    //   </Menu>
+    // );
     const { uploading, fileList } = this.state;
 
     const uploadProps = {
@@ -260,7 +328,6 @@ class TableList extends Component<TableListProps, TableListState> {
       },
       fileList,
     };
-    console.log(group.manage_list)
     return (
       <PageHeaderWrapper>
         <Card bordered={false}>
@@ -271,12 +338,12 @@ class TableList extends Component<TableListProps, TableListState> {
               </Button>
               {selectedRows.length > 0 && (
                 <span>
-                  <Button>批量操作</Button>
-                  <Dropdown overlay={menu}>
-                    <Button>
-                      更多操作 <Icon type="down" />
-                    </Button>
-                  </Dropdown>
+                  <Button onClick={this.handleMDelClick}>批量删除</Button>
+                  {/*<Dropdown overlay={menu}>*/}
+                    {/*<Button>*/}
+                      {/*更多操作 <Icon type="down" />*/}
+                    {/*</Button>*/}
+                  {/*</Dropdown>*/}
                 </span>
               )}
             </div>

@@ -124,7 +124,6 @@ class StandardTable extends Component<StandardTableProps<ManageListItemType>, St
 
     return (
       <div className={styles.standardTable}>
-        {console.log(list)}
         <Table
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}

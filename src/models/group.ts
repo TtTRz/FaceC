@@ -125,12 +125,8 @@ const GroupModel: GroupModelType = {
     *mpostManageListEffect({ payload }, { call }) {
       const response = yield call(mpostManageList, payload);
       const { data } = response;
-      console.log(data.status[payload.id])
-      if(data.status[payload.id] === 1) {
-        payload.onSuccess(true);
-      } else {
-        payload.onSuccess(false);
-      }
+      payload.onSuccess(true);
+
     },
 
     *delManageListEffect({ payload }, { call, put }) {
